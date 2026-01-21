@@ -1,11 +1,12 @@
 console.log('Happy developing ✨')
 
 // DICHIARAZIONE VARIABILI GLOBALI
-let p = []; //ARRAY PROCESSI
-let at = []; //ARRAY TEMPO DI ARRIVO
-let bt = []; //ARRAY TEMPO DI BURST
-let rbt = []; //ARRAY TEMPO DI BURST RIMANENTE
-let pr = []; //ARRAY PRIORITÀ
+let p = ["P1","P2","P3"]; //ARRAY PROCESSI
+let at = [0,1,2]; //ARRAY TEMPO DI ARRIVO
+let bt = [5,3,6]; //ARRAY TEMPO DI BURST
+let rbt = [...bt]; //ARRAY TEMPO DI BURST RIMANENTE
+let ts = 3; //TIME SLICE 
+
 
 /* FUNZIONE RESET
  La tabella dei processi viene sostituita con una tabella vuota
@@ -24,7 +25,7 @@ function reset(){
 */
 function start(){
    let i;
-   rbt = bt;
+
    // si inseriscono nel corpo della tabella i dati dei processi 
    let tableEl = document.getElementById("idTable");
    let oldTBodyEl = tableEl.getElementsByTagName('tbody')[0];
@@ -41,8 +42,20 @@ function start(){
        tdEl.id = "idP" + i;
        tdEl.appendChild(document.createTextNode(rbt[i]));
        tdEl = trEl.insertCell();
-       tdEl.appendChild(document.createTextNode(pr[i]));
+       tdEl.appendChild(document.createTextNode(ts));
+
    }
    tableEl.replaceChild(newTBodyEl, oldTBodyEl);
    document.getElementById("output").style.display = "block";
+
+   let process = document.getElementById("process");
+   process.innerHTML = "";
+
+   for (let i=0; i<p.length; i++){
+    let div = document.createElement("div");
+    div.className = "progress-bar";
+    div.style.width = (bt[i]*10) + "%";
+    div.innerHTML = p[i];
+    process.appendChild(div);
+   }
 }
