@@ -7,42 +7,61 @@
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+   
 </head>
 
 <body>
 <div class="container">
-   <h2>CPU scheduler simulator</h2>
-   <p>L'algoritmo Round Robin </p>
-   <div>
-       <div>
-          <button id="idStart" onclick="start()"> Start </button>
-          <button id="idReset" onclick="reset()"> Reset </button>
-       </div>
-       <div>
-           <table class="table" id="idTable">
-               <thead class="table-light">
-                   <tr>
-                   <th>Process</th>
-                       <th>Arrival Time</th>
-                       <th>Burst Time</th>
-                       <th>Remaining Burst Time</th>
-                       <th>Time Slice</th>
-                   </tr>
-               </thead>
-               <tbody>
-               </tbody>
-           </table>
+   <h2>CPU Scheduler Simulator</h2>
+   <p><strong>L'algoritmo Round Robin </strong>è una tecnica di scheduling della CPU in sistemi operativi, progettata per il time-sharing, che assegna a ogni processo una porzione di tempo uguale e ciclica, detta time slice</p>
+   
+
+   <div class="inserNumProcessi">
+       <label for="numProcessi"><strong>Numero processi:</strong></label>
+       <input type="number" class="numInser" id="numProcessi" min="1" max="10" placeholder="Es: 3">
+       <button class="conferma" onclick="conferma()">Conferma</button>
+   </div>
+
+
+   <div class="inserDatiProcessi">
+       <h3>Inserisci i dati dei processi:</h3>
+       <div id="campiProcessi"></div>
+       
+       <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid #ddd;">
+           <label for="timeSlice"><strong>Time Slice:</strong></label>
+           <input type="number" class="sliceInser" id="timeSlice" min="1" placeholder="Es: 3">
        </div>
    </div>
-    <div id="output" style="display: none">
-       <p>Di seguito l'evoluzione dei processi: </p>
-       <div class="progress" id="process" >
-           <div class="progress-bar progress-bar-success" role="progressbar" style="width:40%" id="p1"> P1 </div>
-           <div class="progress-bar progress-bar-warning" role="progressbar" style="width:35%" id="p2"> P2 </div>
-           <div class="progress-bar progress-bar-danger" role="progressbar" style="width:25%" id="p3"> P3 </div>
+
+   <div style="margin-top: 20px;">
+       <button id="idStart" onclick="start()">Start</button>
+       <button id="idReset" onclick="reset()">Reset</button>
+   </div>
+
+
+   <div>
+       <table class="table table-bordered table-striped" id="idTable">
+           <thead class="table-light" style="background-color: #337ab7; color: white;">
+               <tr>
+                   <th>Process</th>
+                   <th>Arrival Time</th>
+                   <th>Burst Time</th>
+                   <th>Remaining Burst Time</th>
+                   <th>Time Slice</th>
+               </tr>
+           </thead>
+           <tbody>
+           </tbody>
+       </table>
+   </div>
+
+   <div id="output" style="display: none">
+       <p><strong>Di seguito l'evoluzione dei processi:</strong></p>
+       <div class="progress" id="process">
        </div>
    </div>
 </div>
+
 <script src="script.js"></script>
 </body>
 </html>
