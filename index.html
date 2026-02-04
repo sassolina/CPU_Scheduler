@@ -1,67 +1,421 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
-   <title>CPU scheduler simulator</title>
+   <title>CPU Scheduler Simulator</title>
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-   
 </head>
 
 <body>
 <div class="container">
-   <h2>CPU Scheduler Simulator</h2>
-   <p><strong>L'algoritmo Round Robin </strong>è una tecnica di scheduling della CPU in sistemi operativi, progettata per il time-sharing, che assegna a ogni processo una porzione di tempo uguale e ciclica, detta time slice</p>
-   
-
-   <div class="inserNumProcessi">
-       <label for="numProcessi"><strong>Numero processi:</strong></label>
-       <input type="number" class="numInser" id="numProcessi" min="1" max="10" placeholder="Es: 3">
-       <button class="conferma" onclick="conferma()">Conferma</button>
+   <div class="header-section">
+       <h2>CPU Scheduler Simulator</h2>
+       <p>Simulatore dell'algoritmo Round Robin per la gestione dei processi</p>
    </div>
 
-
-   <div class="inserDatiProcessi">
-       <h3>Inserisci i dati dei processi:</h3>
-       <div id="campiProcessi"></div>
+   <div class="main-section">
+       <h3>Algoritmo Round Robin</h3>
        
-       <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid #ddd;">
-           <label for="timeSlice"><strong>Time Slice:</strong></label>
-           <input type="number" class="sliceInser" id="timeSlice" min="1" placeholder="Es: 3">
+       <h4>Cos'è il Round Robin?</h4>
+       <p><strong>L'algoritmo Round Robin</strong> è una tecnica di scheduling della CPU utilizzata nei sistemi operativi, 
+       progettata per il time-sharing. Assegna a ogni processo una porzione di tempo uguale e ciclica, detta <strong>time slice</strong> o quantum.</p>
+       
+       <h4>Caratteristiche Principali</h4>
+       <p><strong>Time Slice (Quantum):</strong> Ogni processo riceve un intervallo di tempo fisso. 
+       Quando scade, il processo viene interrotto e rimesso in coda.</p>
+       
+       <p><strong>Scheduling Circolare:</strong> I processi sono gestiti in una coda FIFO (First In First Out). 
+       Quando un processo termina il suo time slice, passa alla fine della coda.</p>
+       
+       <p><strong>Preemptive:</strong> L'algoritmo può interrompere l'esecuzione di un processo prima del completamento 
+       per dare spazio ad altri processi.</p>
+       
+       <h4>Come Funziona</h4>
+       <ol>
+           <li>I processi vengono inseriti in una coda in base al tempo di arrivo</li>
+           <li>Il primo processo riceve la CPU per un time slice</li>
+           <li>Se non termina, viene interrotto e rimesso in coda</li>
+           <li>Il processo successivo riceve la CPU</li>
+           <li>Il ciclo continua finché tutti i processi sono completati</li>
+       </ol>
+
+       <hr style="margin: 30px 0;">
+
+       <h3>Inserimento Dati</h3>
+       <div class="inserNumProcessi">
+           <label><strong>Numero processi:</strong></label>
+           <input type="number" class="form-control" style="width: 150px; display: inline-block; margin: 0 10px;" 
+                  id="numProcessi" min="1" max="10" placeholder="Es: 3">
+           <button class="btn-conferma" onclick="conferma()">Conferma</button>
        </div>
-   </div>
 
-   <div style="margin-top: 20px;">
-       <button id="idStart" onclick="start()">Start</button>
-       <button id="idReset" onclick="reset()">Reset</button>
-   </div>
+       <div class="inserDatiProcessi">
+           <h4>Inserisci i dati dei processi:</h4>
+           <div id="campiProcessi"></div>
+           
+           <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid #ddd;">
+               <label><strong>Time Slice:</strong></label>
+               <input type="number" class="form-control" style="width: 150px; display: inline-block; margin: 0 10px;" 
+                      id="timeSlice" min="1" placeholder="Es: 2">
+           </div>
+       </div>
 
+       <div style="margin-top: 20px;">
+           <button class="btn-start" onclick="start()">Start</button>
+           <button class="btn-reset" onclick="reset()">Reset</button>
+       </div>
 
-   <div>
-       <table class="table table-bordered table-striped" id="idTable">
-           <thead class="table-light" style="background-color: #337ab7; color: white;">
-               <tr>
-                   <th>Process</th>
-                   <th>Arrival Time</th>
-                   <th>Burst Time</th>
-                   <th>Remaining Burst Time</th>
-                   <th>Time Slice</th>
-               </tr>
-           </thead>
-           <tbody>
-           </tbody>
-       </table>
-   </div>
+       <div id="output" style="display: none;">
+           <hr>
+           <h3>Risultati Simulazione</h3>
+           
+           <table class="table table-bordered table-striped" id="idTable">
+               <thead style="background-color: #337ab7; color: white;">
+                   <tr>
+                       <th>Process</th>
+                       <th>Arrival Time</th>
+                       <th>Burst Time</th>
+                       <th>Remaining Burst Time</th>
+                       <th>Time Slice</th>
+                   </tr>
+               </thead>
+               <tbody>
+               </tbody>
+           </table>
 
-   <div id="output" style="display: none">
-       <p><strong>Di seguito l'evoluzione dei processi:</strong></p>
-       <div class="progress" id="process">
+           <div id="ganttSection" style="display: none; margin-top: 30px;">
+               <p><strong>Di seguito l'evoluzione dei processi:</strong></p>
+               <div class="progress" style="height: 50px; margin-bottom: 5px;" id="ganttChart"></div>
+               <div id="ganttTime" style="display: flex; position: relative; font-size: 14px; font-weight: bold;"></div>
+           </div>
+
+           <div id="statsSection" style="display: none; margin-top: 30px;">
+               <h4>Parametri del Processore</h4>
+               <table class="table table-bordered">
+                   <thead style="background-color: #5cb85c; color: white;">
+                       <tr>
+                           <th>Processo</th>
+                           <th>Tempo di Completamento</th>
+                           <th>Turnaround</th>
+                           <th>Tempo di attesa</th>
+                       </tr>
+                   </thead>
+                   <tbody id="statsBody">
+                   </tbody>
+               </table>
+               <div class="alert alert-info">
+                   <p><strong>Turnaround medio:</strong> <span id="avgTAT"></span></p>
+                   <p style="margin: 0;"><strong>Tempo medio di attesa:</strong> <span id="avgWT"></span></p>
+               </div>
+           </div>
        </div>
    </div>
 </div>
 
-<script src="script.js"></script>
+<script>
+console.log('Happy developing ✨')
+
+// VARIABILI GLOBALI
+let p = [];    // Array processi
+let at = [];   // Array tempo arrivo
+let bt = [];   // Array burst time
+let ts = 0;    // Time slice
+
+function conferma() {
+    let numProcessi = document.getElementById("numProcessi").value;
+    
+    if (numProcessi < 1 || numProcessi === "" || numProcessi > 10) {
+        alert("Inserisci un numero valido di processi (da 1 a 10)");
+        return;
+    }
+    
+    let container = document.getElementById("campiProcessi");
+    container.innerHTML = "";
+    
+    for (let i = 1; i <= numProcessi; i++) {
+        let div = document.createElement("div");
+        div.className = "process-input";
+        
+        div.innerHTML = `
+            <h5 style="margin-top: 0;"><strong>Processo P${i}</strong></h5>
+            <div style="margin-bottom: 10px;">
+                <label>Arrival Time: </label>
+                <input type="number" class="form-control" style="width: 120px; display: inline-block;" 
+                       id="arrival${i}" min="0" value="0">
+            </div>
+            <div>
+                <label>Burst Time: </label>
+                <input type="number" class="form-control" style="width: 120px; display: inline-block;" 
+                       id="burst${i}" min="1" value="${i + 2}">
+            </div>
+        `;
+        
+        container.appendChild(div);
+    }
+    
+    document.querySelector(".inserDatiProcessi").style.display = "block";
+}
+
+// Funzione reset
+function reset() {
+    let tableEl = document.getElementById("idTable");
+    let oldTBodyEl = tableEl.getElementsByTagName('tbody')[0];
+    let newTBodyEl = document.createElement('tbody');
+    tableEl.replaceChild(newTBodyEl, oldTBodyEl);
+    
+    document.getElementById("output").style.display = "none";
+    document.getElementById("ganttSection").style.display = "none";
+    document.getElementById("statsSection").style.display = "none";
+    
+    document.getElementById("numProcessi").value = "";
+    document.getElementById("campiProcessi").innerHTML = "";
+    document.getElementById("timeSlice").value = "";
+    document.querySelector(".inserDatiProcessi").style.display = "none";
+    
+    p = [];
+    at = [];
+    bt = [];
+    ts = 0;
+}
+
+// Funzione start
+function start() {
+    let numProcessi = document.getElementById("numProcessi").value;
+    let timeSlice = document.getElementById("timeSlice").value;
+    
+    if (!numProcessi || !timeSlice) {
+        alert("Compila il numero di processi e il time slice!");
+        return;
+    }
+    
+    if (timeSlice < 1) {
+        alert("Il time slice deve essere almeno 1!");
+        return;
+    }
+    
+    p = [];
+    at = [];
+    bt = [];
+    ts = parseInt(timeSlice);
+    
+    for (let i = 1; i <= numProcessi; i++) {
+        let arrival = document.getElementById("arrival" + i).value;
+        let burst = document.getElementById("burst" + i).value;
+        
+        if (!arrival || !burst || burst < 1) {
+            alert("Compila tutti i campi correttamente!");
+            return;
+        }
+        
+        p.push("P" + i);
+        at.push(parseInt(arrival));
+        bt.push(parseInt(burst));
+    }
+    
+    mostraTabella();
+    eseguiRoundRobin();
+    document.getElementById("output").style.display = "block";
+}
+
+function mostraTabella() {
+    let tableEl = document.getElementById("idTable");
+    let oldTBodyEl = tableEl.getElementsByTagName('tbody')[0];
+    let newTBodyEl = document.createElement("tbody");
+    
+    for (let i = 0; i < p.length; i++) {
+        let row = newTBodyEl.insertRow();
+        
+        let cell = row.insertCell();
+        cell.textContent = p[i];
+        
+        cell = row.insertCell();
+        cell.textContent = at[i];
+        
+        cell = row.insertCell();
+        cell.textContent = bt[i];
+        
+        cell = row.insertCell();
+        cell.id = "rbt" + i;
+        cell.textContent = bt[i];
+        
+        cell = row.insertCell();
+        cell.textContent = ts;
+    }
+    
+    tableEl.replaceChild(newTBodyEl, oldTBodyEl);
+}
+
+function eseguiRoundRobin() {
+    let n = p.length;
+    let rbt = [...bt];
+    let tempo = 0;
+    let coda = [];
+    let ganttSequence = [];
+    let completionTime = new Array(n).fill(0);
+    let processiCompletati = 0;
+    let inCoda = new Array(n).fill(false);
+
+    let indici = [];
+    for (let i = 0; i < n; i++) {
+        indici.push(i);
+    }
+    
+    for (let i = 0; i < n - 1; i++) {
+        for (let j = 0; j < n - i - 1; j++) {
+            if (at[indici[j]] > at[indici[j + 1]]) {
+                let temp = indici[j];
+                indici[j] = indici[j + 1];
+                indici[j + 1] = temp;
+            }
+        }
+    }
+    
+    let nextIndex = 0;
+    
+    while (processiCompletati < n) {
+
+        while (nextIndex < n && at[indici[nextIndex]] <= tempo) {
+            if (!inCoda[indici[nextIndex]] && rbt[indici[nextIndex]] > 0) {
+                coda.push(indici[nextIndex]);
+                inCoda[indici[nextIndex]] = true;
+            }
+            nextIndex++;
+        }
+
+        if (coda.length === 0) {
+            if (nextIndex < n) {
+                tempo = at[indici[nextIndex]];
+            }
+            continue;
+        }
+
+        let i = coda.shift();
+        inCoda[i] = false;
+        
+        let tempoEsec = Math.min(ts, rbt[i]);
+
+        ganttSequence.push({
+            processo: p[i],
+            durata: tempoEsec
+        });
+  
+        rbt[i] -= tempoEsec;
+        tempo += tempoEsec;
+        
+        document.getElementById("rbt" + i).textContent = rbt[i];
+        
+        while (nextIndex < n && at[indici[nextIndex]] <= tempo) {
+            if (!inCoda[indici[nextIndex]] && rbt[indici[nextIndex]] > 0) {
+                coda.push(indici[nextIndex]);
+                inCoda[indici[nextIndex]] = true;
+            }
+            nextIndex++;
+        }
+
+        if (rbt[i] > 0) {
+            coda.push(i);
+            inCoda[i] = true;
+        } else {
+            completionTime[i] = tempo;
+            processiCompletati++;
+        }
+    }
+
+    creaGantt(ganttSequence);
+    calcolaStatistiche(completionTime);
+}
+
+function creaGantt(sequenza) {
+    let ganttChart = document.getElementById("ganttChart");
+    let ganttTime = document.getElementById("ganttTime");
+    ganttChart.innerHTML = "";
+    ganttTime.innerHTML = "";
+    
+    let colori = ["#5cb85c", "#f0ad4e", "#d9534f", "#5bc0de", "#9b59b6"];
+    let coloriProcesso = {};
+
+    for (let i = 0; i < p.length; i++) {
+        coloriProcesso[p[i]] = colori[i % colori.length];
+    }
+
+    let tempoTotale = 0;
+    for (let i = 0; i < sequenza.length; i++) {
+        tempoTotale += sequenza[i].durata;
+    }
+    
+    let tempoCorrente = 0;
+    
+    let timeLabel0 = document.createElement("div");
+    timeLabel0.style.position = "absolute";
+    timeLabel0.style.left = "0px";
+    timeLabel0.textContent = "0";
+    ganttTime.appendChild(timeLabel0);
+    
+    for (let i = 0; i < sequenza.length; i++) {
+        let blocco = document.createElement("div");
+        blocco.className = "progress-bar";
+        let percentuale = (sequenza[i].durata / tempoTotale) * 100;
+        blocco.style.width = percentuale + "%";
+        blocco.style.backgroundColor = coloriProcesso[sequenza[i].processo];
+        blocco.style.color = "white";
+        blocco.style.fontWeight = "bold";
+        blocco.style.fontSize = "16px";
+        blocco.style.lineHeight = "50px";
+        blocco.textContent = sequenza[i].processo;
+        ganttChart.appendChild(blocco);
+        
+        tempoCorrente += sequenza[i].durata;
+        let timeLabel = document.createElement("div");
+        timeLabel.style.position = "absolute";
+        timeLabel.style.left = ((tempoCorrente / tempoTotale) * 100) + "%";
+        timeLabel.style.transform = "translateX(-50%)";
+        timeLabel.textContent = tempoCorrente;
+        ganttTime.appendChild(timeLabel);
+    }
+    
+    document.getElementById("ganttSection").style.display = "block";
+}
+
+function calcolaStatistiche(completionTime) {
+    let statsBody = document.getElementById("statsBody");
+    statsBody.innerHTML = "";
+    
+    let totalTAT = 0;
+    let totalWT = 0;
+    
+    for (let i = 0; i < p.length; i++) {
+        let tat = completionTime[i] - at[i];
+        let wt = tat - bt[i];
+        
+        totalTAT += tat;
+        totalWT += wt;
+        
+        let row = statsBody.insertRow();
+        
+        let cell = row.insertCell();
+        cell.textContent = p[i];
+        
+        cell = row.insertCell();
+        cell.textContent = completionTime[i];
+        
+        cell = row.insertCell();
+        cell.textContent = tat;
+        
+        cell = row.insertCell();
+        cell.textContent = wt;
+    }
+    
+    let avgTAT = (totalTAT / p.length).toFixed(2);
+    let avgWT = (totalWT / p.length).toFixed(2);
+    
+    document.getElementById("avgTAT").textContent = avgTAT;
+    document.getElementById("avgWT").textContent = avgWT;
+    
+    document.getElementById("statsSection").style.display = "block";
+}
+</script>
 </body>
 </html>
